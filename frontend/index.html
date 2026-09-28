@@ -64,7 +64,9 @@
         flex-shrink: 0;
         padding: 12px 24px;
         border-bottom: 1px solid var(--border);
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       .brand {
@@ -72,6 +74,120 @@
         font-size: 0.95rem;
         color: var(--text);
         letter-spacing: 0;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user-email {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .logout-btn {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: var(--text);
+        transition: background 120ms;
+      }
+
+      .logout-btn:hover {
+        background: var(--user-bubble);
+      }
+
+      /* Auth screen */
+      .auth-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 380px;
+        padding: 32px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        text-align: center;
+      }
+
+      .auth-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0 0 4px;
+      }
+
+      .auth-subtitle {
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+
+      .auth-error {
+        color: #c0392b;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: #fff5f5;
+        border-radius: 8px;
+      }
+
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .auth-form input {
+        padding: 10px 14px;
+        border: 1px solid var(--composer-border);
+        border-radius: 10px;
+        font: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 150ms;
+      }
+
+      .auth-form input:focus {
+        border-color: var(--accent);
+      }
+
+      .auth-form button {
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 120ms;
+      }
+
+      .auth-form button:hover {
+        background: var(--accent-hover);
+      }
+
+      .auth-toggle {
+        margin-top: 16px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .auth-toggle a {
+        color: var(--accent);
+        text-decoration: underline;
       }
 
       .messages {

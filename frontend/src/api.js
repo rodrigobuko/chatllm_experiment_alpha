@@ -1,9 +1,44 @@
 const API_BASE = window.location.origin;
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("access_token");
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
+
+async function authFetch(url, options = {}) {
+  const headers = getAuthHeaders();
+  if (options.headers) Object.assign(headers, options.headers);
+  const response = await fetch(url, { ...options, headers });
+  if (response.status === 401) {
+    // Tenta refresh
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (refreshToken) {
+      const refreshRes = await fetch(`${API_BASE}/api/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+        headers["Authorization"] = `Bearer ${data.access_token}`;
+        return fetch(url, { ...options, headers });
+      }
+    }
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    window.location.reload();
+    throw new Error("Sessao expirada.");
+  }
+  return response;
+}
+
 async function sendMessageStream({ message, history, onDelta, signal }) {
-  const response = await fetch(`${API_BASE}/api/chat/stream`, {
+  const response = await authFetch(`${API_BASE}/api/chat/stream`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, history }),
     signal,
   });

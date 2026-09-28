@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import os
+
+# Forca banco em memoria para os testes — precisa ser antes de importar o app
+os.environ["SQLALCHEMY_DATABASE_URL"] = "sqlite:///:memory:?check_same_thread=False"
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

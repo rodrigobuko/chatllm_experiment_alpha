@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 
 from backend.config import OPENROUTER_MODEL_DEFAULT
 from backend.database import get_db
-from backend.models import ChatMessage
+from backend.models import ChatMessage, User
+from backend.routers.auth import get_current_user
 from backend.schemas.chat import ChatRequest, ChatResponse
 from backend.services.openrouter import OpenRouterConfigError, generate_reply, stream_reply
 
@@ -22,7 +23,11 @@ def health_check() -> dict[str, str]:
 
 
 @router.post("/api/chat", response_model=ChatResponse)
-async def chat(payload: ChatRequest, db: Session = Depends(get_db)) -> ChatResponse:
+async def chat(
+    payload: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ChatResponse:
     try:
         reply, model_name = await generate_reply(
             user_message=payload.message,
@@ -45,7 +50,11 @@ async def chat(payload: ChatRequest, db: Session = Depends(get_db)) -> ChatRespo
 
 
 @router.post("/api/chat/stream")
-async def chat_stream(payload: ChatRequest, db: Session = Depends(get_db)) -> StreamingResponse:
+async def chat_stream(
+    payload: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> StreamingResponse:
     resolved_model = payload.model or OPENROUTER_MODEL_DEFAULT
 
     async def event_generator():
