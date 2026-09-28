@@ -12,7 +12,6 @@ async function authFetch(url, options = {}) {
   if (options.headers) Object.assign(headers, options.headers);
   const response = await fetch(url, { ...options, headers });
   if (response.status === 401) {
-    // Tenta refresh
     const refreshToken = localStorage.getItem("refresh_token");
     if (refreshToken) {
       const refreshRes = await fetch(`${API_BASE}/api/auth/refresh`, {
@@ -36,10 +35,45 @@ async function authFetch(url, options = {}) {
   return response;
 }
 
-async function sendMessageStream({ message, history, onDelta, signal }) {
+// --- Session API ---
+
+async function fetchSessions() {
+  const res = await authFetch(`${API_BASE}/api/sessions`);
+  if (!res.ok) throw new Error("Erro ao carregar sessoes.");
+  return res.json();
+}
+
+async function createSession() {
+  const res = await authFetch(`${API_BASE}/api/sessions`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error("Erro ao criar sessao.");
+  return res.json();
+}
+
+async function renameSession(sessionId, title) {
+  const res = await authFetch(`${API_BASE}/api/sessions/${sessionId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) throw new Error("Erro ao renomear sessao.");
+  return res.json();
+}
+
+async function deleteSession(sessionId) {
+  const res = await authFetch(`${API_BASE}/api/sessions/${sessionId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Erro ao deletar sessao.");
+}
+
+// --- Chat API ---
+
+async function sendMessageStream({ message, history, sessionId, onDelta, signal }) {
   const response = await authFetch(`${API_BASE}/api/chat/stream`, {
     method: "POST",
-    body: JSON.stringify({ message, history }),
+    body: JSON.stringify({ message, history, session_id: sessionId }),
     signal,
   });
 
